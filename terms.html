@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#070b0c">
+  <meta name="color-scheme" content="dark light">
+  <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
+  <title>Terms of Use · NEET-PG 2026 RankLab</title>
+  <meta name="description" content="Terms of use for the NEET-PG 2026 RankLab static web app.">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/app-icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <script>
+    (() => {
+      let theme = "dark";
+      try {
+        const saved = localStorage.getItem("ranklab-theme");
+        theme = saved === "light" || saved === "dark" ? saved : (matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark");
+      } catch (_) { theme = matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark"; }
+      document.documentElement.dataset.theme = theme;
+    })();
+  </script>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="secondary-page">
+  <div class="ambient ambient-one" aria-hidden="true"></div>
+  <div class="ambient ambient-two" aria-hidden="true"></div>
+
+  <header class="topbar secondary-topbar">
+    <div class="topbar-inner">
+      <a class="brand" href="index.html" aria-label="Back to RankLab predictor">
+        <span class="brand-mark" aria-hidden="true">R<span>26</span></span>
+        <span class="brand-name">RankLab</span>
+      </a>
+      <div class="secondary-actions">
+        <a class="page-nav-link optional-link" href="feedback.html">Feedback</a>
+        <a class="page-nav-link" href="index.html">Back to predictor</a>
+        <button class="theme-toggle" id="themeToggle" type="button" aria-label="Switch colour theme" aria-pressed="false">
+          <span class="theme-track" aria-hidden="true">
+            <svg class="theme-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.5"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.65 17.65l1.42 1.42M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.65 6.35l1.42-1.42"></path></svg>
+            <svg class="theme-moon" viewBox="0 0 24 24"><path d="M20.1 15.3A8.3 8.3 0 0 1 8.7 3.9 8.5 8.5 0 1 0 20.1 15.3Z"></path></svg>
+            <span class="theme-orb"></span>
+          </span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="page-shell">
+    <header class="page-intro">
+      <p class="eyebrow">Clear rules. No tiny-font ambush.</p>
+      <h1>Terms<br>of use.</h1>
+      <p>RankLab is a pre-result research model for personal exploration. By using it, you agree to the rules below.</p>
+      <div class="page-meta"><span>Effective 03 Sep 2026</span><span>Human use only</span><span>Proprietary</span></div>
+    </header>
+
+    <div class="policy-stack">
+      <div class="policy-callout" role="note">
+        <span aria-hidden="true">!</span>
+        <p><strong>RankLab is not an official NEET-PG table.</strong> It does not provide medical, legal, financial, admissions, or counselling advice.</p>
+      </div>
+
+      <section class="policy-card" aria-labelledby="terms-model">
+        <span class="policy-number">01</span>
+        <h2 id="terms-model">Use the range, not a promise</h2>
+        <p>Every AIR shown before official results is a model output based on scenarios and assumptions. Actual ranks can differ materially. Verify all decisions against official NBEMS and counselling information, and seek qualified advice where appropriate.</p>
+      </section>
+
+      <section class="policy-card" aria-labelledby="terms-license">
+        <span class="policy-number">02</span>
+        <h2 id="terms-license">Limited human-use permission</h2>
+        <p>Copyright © 2026 Ayush Yadav. All rights reserved. You receive a limited, revocable permission to use the published interface manually for your own personal, non-commercial purposes.</p>
+        <p><strong>No source-code or data licence is granted.</strong> The design, copy, model files, datasets, code, and compiled assets are proprietary unless a specific third-party item says otherwise. The repository being publicly viewable does not grant permission to copy or reuse it.</p>
+      </section>
+
+      <section class="policy-card" aria-labelledby="terms-bots">
+        <span class="policy-number">03</span>
+        <h2 id="terms-bots">No bots, scraping, or AI training</h2>
+        <p>Automated access is not permitted. You may not use bots, crawlers, scrapers, headless browsers, agents, bulk downloaders, data-mining tools, or similar systems to access, index, copy, monitor, test, or extract RankLab content.</p>
+        <ul>
+          <li>No dataset creation, model training, retrieval corpus, benchmarking, or machine-learning use.</li>
+          <li>No mirroring, framing, republication, redistribution, resale, or derivative service.</li>
+          <li>No reverse engineering, circumvention of access controls, or interference with the site.</li>
+          <li>No use of RankLab’s identity, design, or outputs to imply endorsement or affiliation.</li>
+        </ul>
+        <p>Automated systems strictly necessary for ordinary hosting, security, browser operation, or accessibility on behalf of a human visitor are excluded only to the minimum extent required for those functions.</p>
+      </section>
+
+      <section class="policy-card" aria-labelledby="terms-conduct">
+        <span class="policy-number">04</span>
+        <h2 id="terms-conduct">Fair use of the service</h2>
+        <p>Do not misuse the site, attempt unauthorized access, introduce malicious code, overload hosting, impersonate another person, or use the predictor for unlawful, deceptive, or harmful activity.</p>
+      </section>
+
+      <section class="policy-card" aria-labelledby="terms-donations">
+        <span class="policy-number">05</span>
+        <h2 id="terms-donations">Voluntary contributions</h2>
+        <p>Support through Razorpay is voluntary and is not a purchase of rank accuracy, preferential access, counselling, or future features. Payments are processed by Razorpay under its own terms and privacy practices. Check the amount and recipient before confirming; contact the email below about an accidental payment.</p>
+      </section>
+
+      <section class="policy-card" aria-labelledby="terms-warranty">
+        <span class="policy-number">06</span>
+        <h2 id="terms-warranty">Availability and disclaimer</h2>
+        <p>RankLab is provided “as is” and “as available,” without warranties about accuracy, completeness, fitness for a particular purpose, availability, or error-free operation. To the maximum extent permitted by applicable law, the owner is not liable for decisions, losses, or damages arising from use of or reliance on the site.</p>
+        <p>The site, model, features, and these terms may be changed, suspended, or discontinued. Continued use after an updated effective date means you accept the revised terms.</p>
+      </section>
+
+      <section class="policy-card" aria-labelledby="terms-contact">
+        <span class="policy-number">07</span>
+        <h2 id="terms-contact">Contact</h2>
+        <p>Questions, permission requests, and rights concerns can be sent to <a href="mailto:Ayushiamazon1@gmail.com">Ayushiamazon1@gmail.com</a>. Also see the <a href="privacy.html">Privacy Policy</a> and the bundled <a href="LICENSE.txt">proprietary licence notice</a>.</p>
+      </section>
+    </div>
+  </main>
+
+  <footer>
+    <div class="section-shell footer-inner">
+      <div><span class="brand-mark small-mark" aria-hidden="true">R<span>26</span></span><p>Made for humans. Bots can sit this one out.</p></div>
+      <div class="footer-meta"><nav aria-label="Legal links"><a href="index.html">Predictor</a><a href="feedback.html">Feedback</a><a href="privacy.html">Privacy</a></nav></div>
+    </div>
+  </footer>
+  <script src="pages.js"></script>
+</body>
+</html>

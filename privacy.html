@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#070b0c">
+  <meta name="color-scheme" content="dark light">
+  <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
+  <title>Privacy Policy · NEET-PG 2026 RankLab</title>
+  <meta name="description" content="Privacy policy for the NEET-PG 2026 RankLab static web app.">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/app-icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <script>
+    (() => {
+      let theme = "dark";
+      try {
+        const saved = localStorage.getItem("ranklab-theme");
+        theme = saved === "light" || saved === "dark" ? saved : (matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark");
+      } catch (_) { theme = matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark"; }
+      document.documentElement.dataset.theme = theme;
+    })();
+  </script>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="secondary-page">
+  <div class="ambient ambient-one" aria-hidden="true"></div>
+  <div class="ambient ambient-two" aria-hidden="true"></div>
+
+  <header class="topbar secondary-topbar">
+    <div class="topbar-inner">
+      <a class="brand" href="index.html" aria-label="Back to RankLab predictor">
+        <span class="brand-mark" aria-hidden="true">R<span>26</span></span>
+        <span class="brand-name">RankLab</span>
+      </a>
+      <div class="secondary-actions">
+        <a class="page-nav-link optional-link" href="feedback.html">Feedback</a>
+        <a class="page-nav-link" href="index.html">Back to predictor</a>
+        <button class="theme-toggle" id="themeToggle" type="button" aria-label="Switch colour theme" aria-pressed="false">
+          <span class="theme-track" aria-hidden="true">
+            <svg class="theme-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.5"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.65 17.65l1.42 1.42M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.65 6.35l1.42-1.42"></path></svg>
+            <svg class="theme-moon" viewBox="0 0 24 24"><path d="M20.1 15.3A8.3 8.3 0 0 1 8.7 3.9 8.5 8.5 0 1 0 20.1 15.3Z"></path></svg>
+            <span class="theme-orb"></span>
+          </span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="page-shell">
+    <header class="page-intro">
+      <p class="eyebrow">The pleasantly short version</p>
+      <h1>Privacy,<br>minus the fog.</h1>
+      <p>RankLab is a static, account-free predictor. It does not run analytics, accept uploads, or store feedback in a website database.</p>
+      <div class="page-meta"><span>Effective 03 Sep 2026</span><span>No accounts</span><span>No ad tracking</span></div>
+    </header>
+
+    <div class="policy-stack">
+      <div class="policy-callout" role="note">
+        <span aria-hidden="true">i</span>
+        <p><strong>The core promise:</strong> scores you explore stay in your browser. RankLab does not transmit them to Ayush Yadav.</p>
+      </div>
+
+      <section class="policy-card" aria-labelledby="privacy-collect">
+        <span class="policy-number">01</span>
+        <h2 id="privacy-collect">What RankLab collects</h2>
+        <p><strong>The site itself does not collect personal information.</strong> There is no account system, database, analytics tracker, advertising pixel, or server-side feedback endpoint operated by RankLab.</p>
+        <p>Your selected score is used in the page only to calculate and display model outputs. It is not saved by RankLab.</p>
+      </section>
+
+      <section class="policy-card" aria-labelledby="privacy-device">
+        <span class="policy-number">02</span>
+        <h2 id="privacy-device">What stays on your device</h2>
+        <ul>
+          <li>Your day/night theme preference may be stored in local browser storage.</li>
+          <li>Install-prompt dismissal and installed-app status may be remembered locally to avoid repeated prompts.</li>
+          <li>A service worker may cache the public app files so the predictor can load offline.</li>
+        </ul>
+        <p>You can clear these items through your browser’s site-data controls or by uninstalling the web app.</p>
+      </section>
+
+      <section class="policy-card" aria-labelledby="privacy-feedback">
+        <span class="policy-number">03</span>
+        <h2 id="privacy-feedback">Feedback and email</h2>
+        <p>The feedback page builds a draft and asks your device to open its email app. <strong>Nothing is submitted by the website.</strong> If you choose to send the email, the message and your sender address are handled by your email provider and received by Ayush Yadav.</p>
+        <p>Email contents may be kept only as reasonably needed to read, respond to, and act on feedback. Do not include passwords, patient information, payment details, or other sensitive data.</p>
+      </section>
+
+      <section class="policy-card" aria-labelledby="privacy-thirdparty">
+        <span class="policy-number">04</span>
+        <h2 id="privacy-thirdparty">Hosting and outside services</h2>
+        <p>GitHub Pages or another hosting provider may process ordinary request information—such as IP address, browser details, and timestamps—under its own policies. RankLab does not receive a custom visitor dashboard from the app itself.</p>
+        <p>External links, including Razorpay, NBEMS, cited publications, GitHub, and your email provider, operate under their own privacy terms. Visiting or paying through those services is optional.</p>
+      </section>
+
+      <section class="policy-card" aria-labelledby="privacy-contact">
+        <span class="policy-number">05</span>
+        <h2 id="privacy-contact">Contact and changes</h2>
+        <p>Questions about this policy can be sent to <a href="mailto:Ayushiamazon1@gmail.com">Ayushiamazon1@gmail.com</a>. This policy may be updated when RankLab’s features or hosting change; the effective date above will be revised.</p>
+      </section>
+    </div>
+  </main>
+
+  <footer>
+    <div class="section-shell footer-inner">
+      <div><span class="brand-mark small-mark" aria-hidden="true">R<span>26</span></span><p>No surveillance arc. Just the curve.</p></div>
+      <div class="footer-meta"><nav aria-label="Legal links"><a href="index.html">Predictor</a><a href="feedback.html">Feedback</a><a href="terms.html">Terms</a></nav></div>
+    </div>
+  </footer>
+  <script src="pages.js"></script>
+</body>
+</html>

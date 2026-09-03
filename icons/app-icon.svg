@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title">
+  <title id="title">RankLab 26 app icon</title>
+  <defs>
+    <linearGradient id="bg" x1="44" y1="24" x2="468" y2="488" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#101a1d"/>
+      <stop offset="1" stop-color="#050809"/>
+    </linearGradient>
+    <linearGradient id="slash" x1="154" y1="382" x2="381" y2="138" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#b9f451"/>
+      <stop offset="1" stop-color="#63d8ff"/>
+    </linearGradient>
+    <pattern id="grid" width="42" height="42" patternUnits="userSpaceOnUse">
+      <path d="M42 0H0V42" fill="none" stroke="#d8f0e5" stroke-opacity=".055" stroke-width="2"/>
+    </pattern>
+  </defs>
+  <rect width="512" height="512" fill="url(#bg)"/>
+  <rect width="512" height="512" fill="url(#grid)"/>
+  <rect x="31" y="31" width="450" height="450" rx="108" fill="none" stroke="#b9f451" stroke-opacity=".2" stroke-width="3"/>
+  <circle cx="256" cy="256" r="170" fill="none" stroke="#63d8ff" stroke-opacity=".13" stroke-width="2" stroke-dasharray="14 18"/>
+  <path d="M117 392 397 112" stroke="url(#slash)" stroke-opacity=".16" stroke-width="36"/>
+  <path d="M141 376V137h103c70 0 113 37 113 96 0 39-21 69-58 83l80 60h-94l-68-56v56h-76Zm76-116h29c25 0 39-11 39-30 0-20-14-30-39-30h-29v60Z" fill="#b9f451"/>
+  <rect x="328" y="119" width="75" height="45" rx="22.5" fill="#63d8ff"/>
+  <text x="365.5" y="150" fill="#071013" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="900" text-anchor="middle">26</text>
+  <circle cx="119" cy="119" r="7" fill="#ffb86a"/>
+  <path d="M105 424h98M309 88h98" stroke="#d8f0e5" stroke-opacity=".24" stroke-width="4" stroke-linecap="round"/>
+</svg>

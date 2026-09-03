@@ -1,0 +1,10 @@
+{
+  "name": "neetpg-2026-ranklab",
+  "version": "2.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node build.mjs",
+    "check": "node --check app.js && node --check pages.js && node --check model-data.js && node build.mjs && node validate.mjs"
+  }
+}

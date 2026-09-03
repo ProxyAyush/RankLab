@@ -1,0 +1,470 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#070b0c">
+  <meta name="color-scheme" content="dark light">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="RankLab 26">
+  <title>NEET-PG 2026 RankLab</title>
+  <meta name="description" content="Explore a transparent pre-result estimate of NEET-PG 2026 AIR, percentile, score clustering and recall sensitivity.">
+  <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/app-icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <script>
+    (() => {
+      document.documentElement.classList.add("js", "is-booting");
+      let theme = "dark";
+      try {
+        const saved = localStorage.getItem("ranklab-theme");
+        theme = saved === "light" || saved === "dark"
+          ? saved
+          : (matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark");
+      } catch (_) {
+        theme = matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+      }
+      document.documentElement.dataset.theme = theme;
+      window.setTimeout(() => document.documentElement.classList.add("boot-timeout"), 4000);
+    })();
+  </script>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="boot-screen" id="bootScreen">
+    <p class="sr-only" role="status">Loading RankLab prediction core.</p>
+    <div class="boot-visual" aria-hidden="true">
+      <div class="boot-speed-lines"></div>
+      <span class="boot-scanline"></span>
+
+      <div class="boot-corner boot-corner-one"><span>RL·26</span><i></i><span>PRE-RESULT</span></div>
+      <div class="boot-corner boot-corner-two"><span>AIR / CURVE</span><i></i><span>MODEL V2</span></div>
+
+      <div class="boot-core">
+        <div class="boot-sigil">
+          <i class="sigil-ring sigil-ring-one"></i>
+          <i class="sigil-ring sigil-ring-two"></i>
+          <i class="sigil-cross"></i>
+          <strong>R<small>26</small></strong>
+        </div>
+
+        <div class="boot-copy">
+          <p><span></span>RankLab // prediction core</p>
+          <div class="boot-title"><span>CURVE</span><span>ONLINE</span></div>
+          <small>Marks → range → better decisions</small>
+        </div>
+      </div>
+
+      <div class="boot-meter">
+        <div class="boot-meter-copy"><span id="bootStatus">Mapping score curve</span><strong id="bootPercent">00</strong></div>
+        <div class="boot-track"><i id="bootProgress"></i></div>
+        <div class="boot-ticks"><span>350</span><span>500</span><span>650</span></div>
+      </div>
+
+      <div class="boot-coordinate"><span>26° / AIR</span><i></i><span>720 MAX</span></div>
+    </div>
+
+    <button class="boot-skip" id="bootSkip" type="button" aria-label="Skip loading animation">Skip intro <span>Esc</span></button>
+  </div>
+
+  <a class="skip-link" href="#predictor">Skip to predictor</a>
+  <div class="ambient ambient-one" aria-hidden="true"></div>
+  <div class="ambient ambient-two" aria-hidden="true"></div>
+
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand" href="#predictor" aria-label="RankLab home">
+        <span class="brand-mark" aria-hidden="true">R<span>26</span></span>
+        <span class="brand-name">RankLab</span>
+      </a>
+
+      <nav class="desktop-nav" aria-label="Page sections">
+        <a href="#predictor">Predict</a>
+        <a href="#why">Why this rank?</a>
+        <a href="#method">Method</a>
+        <a href="feedback.html">Feedback</a>
+        <a href="#support">Support</a>
+      </nav>
+
+      <div class="top-actions">
+        <span class="status-pill"><span class="status-dot" aria-hidden="true"></span>Pre-result model · not official</span>
+        <button class="install-trigger" id="installAppOpen" type="button" aria-label="Install RankLab as an app" hidden>
+          <span class="install-trigger-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><rect x="5.5" y="2.5" width="13" height="19" rx="3"></rect><path d="M12 6v8m0 0 3-3m-3 3-3-3M10 18h4"></path></svg>
+          </span>
+          <span class="install-trigger-label">Install</span>
+        </button>
+        <button class="theme-toggle" id="themeToggle" type="button" aria-label="Switch to day mode" aria-pressed="false">
+          <span class="theme-track" aria-hidden="true">
+            <svg class="theme-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.5"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.65 17.65l1.42 1.42M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.65 6.35l1.42-1.42"></path></svg>
+            <svg class="theme-moon" viewBox="0 0 24 24"><path d="M20.1 15.3A8.3 8.3 0 0 1 8.7 3.9 8.5 8.5 0 1 0 20.1 15.3Z"></path></svg>
+            <span class="theme-orb"></span>
+          </span>
+          <span class="sr-only" id="themeText">Day mode</span>
+        </button>
+        <button class="info-button" id="helpOpen" type="button" aria-haspopup="dialog" aria-controls="helpDialog">
+          <span class="info-glyph" aria-hidden="true">i</span>
+          <span class="info-label">How to read this</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="workspace section-shell" id="predictor" aria-labelledby="pageTitle">
+      <div class="section-heading intro-heading">
+        <div>
+          <p class="eyebrow">NEET-PG 2026 · Research model v2 · 350–650</p>
+          <h1 id="pageTitle">Your marks. The rank curve. <span class="hero-punch">Zero drama.</span></h1>
+        </div>
+        <p class="lede">Slide it. Compare four paper scenarios. Then breathe. This is a transparent pre-result model—not a prophecy wearing a lab coat.</p>
+      </div>
+
+      <div class="predictor-shell">
+        <aside class="control-panel" aria-label="Prediction controls">
+          <div class="panel-kicker">
+            <span>01</span>
+            <span>Your score</span>
+          </div>
+
+          <div class="score-entry">
+            <button class="step-button" id="stepDown" type="button" aria-label="Decrease marks by one">
+              <span aria-hidden="true">−</span>
+            </button>
+            <label class="number-wrap" for="markNumber">
+              <span class="sr-only">Expected marks out of 720</span>
+              <input id="markNumber" type="number" min="350" max="650" value="508" inputmode="numeric" step="1" autocomplete="off">
+              <span>/720</span>
+            </label>
+            <button class="step-button" id="stepUp" type="button" aria-label="Increase marks by one">
+              <span aria-hidden="true">+</span>
+            </button>
+          </div>
+
+          <div class="slider-wrap">
+            <input id="markRange" type="range" min="350" max="650" value="508" step="1" aria-label="Expected marks from 350 to 650">
+            <div class="slider-labels" aria-hidden="true"><span>350</span><span>500</span><span>650</span></div>
+          </div>
+
+          <div class="quick-row" aria-label="Quick mark adjustments">
+            <button class="quick-button" type="button" data-delta="-10">−10</button>
+            <button class="quick-button" type="button" data-delta="-5">−5</button>
+            <button class="quick-button reset-button" type="button" data-mark="508">Reset</button>
+            <button class="quick-button" type="button" data-delta="5">+5</button>
+            <button class="quick-button" type="button" data-delta="10">+10</button>
+          </div>
+
+          <div class="control-divider"></div>
+
+          <div class="panel-kicker">
+            <span>02</span>
+            <span>Scenario view</span>
+          </div>
+
+          <div class="lens-switch" role="group" aria-label="Prediction lens">
+            <button class="is-active" type="button" data-lens="weighted" aria-pressed="true">Weighted</button>
+            <button type="button" data-lens="harder" aria-pressed="false">Harder</button>
+            <button type="button" data-lens="baseline" aria-pressed="false">Recent</button>
+            <button type="button" data-lens="mixed" aria-pressed="false">Mixed</button>
+            <button type="button" data-lens="easier" aria-pressed="false">Easier</button>
+            <span class="lens-indicator" aria-hidden="true"></span>
+          </div>
+
+          <p class="control-note" id="lensNote">The planning centre: 45% recent baseline, 25% harder, 15% mixed and 15% easier-paper scenarios.</p>
+
+          <div class="scenario-note">
+            <span class="scenario-icon" aria-hidden="true">↗</span>
+            <p><strong>Your saved recall:</strong> 136 correct, 36 wrong, 8 unattempted = <strong>508 marks</strong>.</p>
+          </div>
+        </aside>
+
+        <section class="result-panel magnetic-surface" aria-labelledby="resultTitle">
+          <div class="celebration-layer" id="celebrationLayer" aria-hidden="true"></div>
+          <div class="result-topline">
+            <div>
+              <p class="result-label" id="resultTitle">Selected scenario AIR</p>
+              <p class="lens-readout"><span id="lensDot" aria-hidden="true"></span><span id="lensName">Scenario-weighted centre</span></p>
+            </div>
+            <p class="updated">Model v2 · 03 Sep 2026</p>
+          </div>
+
+          <div class="rank-lockup" aria-live="polite" aria-atomic="true">
+            <span class="rank-prefix">AIR</span>
+            <output id="airKpi">9,825</output>
+          </div>
+
+          <div class="rank-mood" id="rankMood" aria-live="polite">
+            <span class="mood-spark" aria-hidden="true">✦</span>
+            <strong id="rankMoodText">Okay. This is cooking.</strong>
+          </div>
+
+          <div class="range-block">
+            <div class="range-copy">
+              <span>Working range</span>
+              <strong><span id="rangeLow">5,541</span>–<span id="rangeHigh">15,660</span></strong>
+            </div>
+            <div class="range-track" aria-hidden="true">
+              <span class="range-fill"></span>
+              <span class="range-marker" id="rangeMarker"></span>
+            </div>
+            <div class="range-ends" aria-hidden="true"><span>Better separation</span><span>Denser top end</span></div>
+            <p class="range-nudge" id="rangeNudge">One mark here moves roughly 244 people. Tiny mark, rude consequence.</p>
+          </div>
+
+          <div class="metric-grid">
+            <article class="metric-card magnetic-surface">
+              <span class="metric-label">Selected marks</span>
+              <strong id="selectedMarksKpi">508 /720</strong>
+              <span>301-point model range</span>
+            </article>
+            <article class="metric-card magnetic-surface">
+              <span class="metric-label">Weighted AIR</span>
+              <strong id="weightedKpi">9,825</strong>
+              <span>scenario-weighted centre</span>
+            </article>
+            <article class="metric-card magnetic-surface">
+              <span class="metric-label">Recent baseline</span>
+              <strong id="baselineKpi">9,644</strong>
+              <span>180-question calibration</span>
+            </article>
+            <article class="metric-card magnetic-surface">
+              <span class="metric-label">Active percentile</span>
+              <strong id="pctKpi">96.31%</strong>
+              <span>among 265,980 appeared</span>
+            </article>
+            <article class="metric-card magnetic-surface">
+              <span class="metric-label">Local crowding</span>
+              <strong id="densityKpi">244</strong>
+              <span>modelled ranks per +1</span>
+            </article>
+            <article class="metric-card magnetic-surface">
+              <span class="metric-label">Score share</span>
+              <strong id="shareKpi">70.6%</strong>
+              <span>of the 720-mark paper</span>
+            </article>
+          </div>
+
+          <figure class="chart-card">
+            <figcaption>
+              <div>
+                <span class="chart-title">The rank curve</span>
+                <span class="chart-subtitle">Tap or drag anywhere on the chart</span>
+              </div>
+              <div class="chart-legend" aria-label="Chart legend">
+                <span><i class="legend-band"></i>Harder ↔ easier</span>
+                <span><i class="legend-line"></i>Weighted</span>
+                <span><i class="legend-active"></i><span id="activeLegend">Weighted selected</span></span>
+              </div>
+            </figcaption>
+            <svg id="rankChart" viewBox="0 0 780 350" role="img" aria-label="Predicted marks to All India Rank curve with an uncertainty band" tabindex="0"></svg>
+          </figure>
+        </section>
+      </div>
+
+      <div class="truth-strip" role="note">
+        <span class="truth-icon" aria-hidden="true">!</span>
+        <p><strong>Pre-result research model — not an official NEET-PG 2026 marks-vs-rank table.</strong> The giant number is charming; the full scenario band is the adult in the room.</p>
+      </div>
+    </section>
+
+    <section class="section-shell recall-section" aria-labelledby="recallTitle">
+      <div class="section-heading compact-heading">
+        <div>
+          <p class="eyebrow">Recall sensitivity</p>
+          <h2 id="recallTitle">One corrected recall is a five-mark plot twist.</h2>
+        </div>
+        <p class="lede">A wrong answer changing to correct moves from −1 to +4: a five-mark swing. Explore three flips either way around the weighted centre.</p>
+      </div>
+
+      <div class="recall-rail" id="recallRail" aria-label="Rank estimates after score changes"></div>
+
+      <details class="score-table-wrap">
+        <summary>
+          <span>
+            <span class="summary-kicker">Score neighbourhood</span>
+            <strong>See every mark around <span id="tableMark">508</span></strong>
+          </span>
+          <span class="summary-action"><span>Open table</span><i aria-hidden="true"></i></span>
+        </summary>
+        <div class="table-scroll">
+          <table>
+            <thead>
+                <tr><th scope="col">Marks</th><th scope="col">Weighted AIR</th><th scope="col">Recent baseline</th><th scope="col">Scenario range</th><th scope="col">Percentile</th><th scope="col">Ranks / mark</th></tr>
+            </thead>
+            <tbody id="scoreTable"></tbody>
+          </table>
+        </div>
+      </details>
+    </section>
+
+    <section class="story section-shell" id="why" aria-labelledby="whyTitle">
+      <div class="story-heading" data-reveal>
+        <p class="eyebrow">The explainer</p>
+        <h2 id="whyTitle">Why can a few marks change thousands of ranks?</h2>
+        <p>Because rank is not a property of your score alone. It is your position inside one year’s entire score distribution.</p>
+      </div>
+
+      <div class="story-grid">
+        <article class="story-card story-card-wide magnetic-surface" data-reveal>
+          <div class="story-number">01</div>
+          <div class="story-content">
+            <p class="story-tag">The queue</p>
+            <h3>Marks tell us what you scored. Rank tells us how many people are ahead.</h3>
+            <p>If a dense cluster of candidates lands near the same score, the curve gets steep: one mark crosses more people. At <strong id="storyMark">508</strong>, this model currently crosses about <strong id="storyDensity">244 candidates per mark</strong>.</p>
+          </div>
+          <div class="queue-visual" aria-hidden="true">
+            <div class="queue-labels"><span>Better AIR</span><span>More candidates</span></div>
+            <div class="queue-dots" id="queueDots"></div>
+          </div>
+        </article>
+
+        <article class="story-card magnetic-surface" data-reveal>
+          <div class="story-number">02</div>
+          <p class="story-tag">The cohort</p>
+          <h3>A larger field stretches the same percentile into a larger rank.</h3>
+          <p>The working count is <strong>265,980 appeared</strong>, versus a 2025 result table extending to about <strong>230,019</strong>. Holding percentile constant, that alone is roughly <strong>15.6% more rank positions</strong>.</p>
+          <div class="cohort-bars" aria-label="Working candidate counts for 2025 and 2026">
+            <div><span>2025 reference</span><i style="--bar:86.5%"></i><strong>230k</strong></div>
+            <div><span>2026 appeared</span><i style="--bar:100%"></i><strong>266k</strong></div>
+          </div>
+        </article>
+
+        <article class="story-card magnetic-surface" data-reveal>
+          <div class="story-number">03</div>
+          <p class="story-tag">The shorter paper</p>
+          <h3>180 questions changes the texture of the score curve.</h3>
+          <p>Previous papers had 200 questions. With 10% fewer items, each question carries more of the percentage score. Under a simple independent-item approximation, score variability is about <strong>5.4% wider</strong>—one reason percentage-only scaling is not enough.</p>
+          <div class="paper-visual" aria-hidden="true">
+            <div><span>2025</span><b>200</b><i><em style="width:100%"></em></i></div>
+            <div><span>2026</span><b>180</b><i><em style="width:90%"></em></i></div>
+          </div>
+        </article>
+
+        <article class="story-card story-card-accent magnetic-surface" data-reveal>
+          <div class="story-number">04</div>
+          <p class="story-tag">The honest answer</p>
+          <h3 id="dynamicWhy">508 can model near weighted AIR 9,825—and still miss.</h3>
+          <p>The centre weights four explicit paper-response scenarios. The shaded envelope is deliberately broad because the official 2026 score–rank distribution is still pending.</p>
+          <a class="text-link" href="#method">Inspect the method <span aria-hidden="true">↘</span></a>
+        </article>
+      </div>
+    </section>
+
+    <section class="method section-shell" id="method" aria-labelledby="methodTitle">
+      <div class="section-heading compact-heading" data-reveal>
+        <div>
+          <p class="eyebrow">Method & sources</p>
+          <h2 id="methodTitle">Transparent enough to disagree with.</h2>
+        </div>
+        <p class="lede">This is an independent pre-result model, not an NBEMS tool. Its assumptions are visible so you can use it as a planning aid—not a promise.</p>
+      </div>
+
+      <div class="method-grid">
+        <div class="method-accordion" data-reveal>
+          <details open>
+            <summary><span>How the weighted centre is made</span><i aria-hidden="true"></i></summary>
+            <div><p>The model simulates a calibrated recent upper-tail distribution, then evaluates four 180-question outcomes: 45% recent baseline, 25% harder paper, 15% mixed response and 15% easier paper. The weighted AIR is their planning centre, not a known result.</p></div>
+          </details>
+          <details>
+            <summary><span>What the uncertainty band means</span><i aria-hidden="true"></i></summary>
+            <div><p>The lower AIR edge is the harder-paper scenario; the upper AIR edge is the easier-paper scenario. It is a scenario envelope, not a statistical confidence interval. The upper edge is useful for conservative planning, but it is not a guaranteed worst case.</p></div>
+          </details>
+          <details>
+            <summary><span>Why 508/720 is not simply 564/800</span><i aria-hidden="true"></i></summary>
+            <div><p>That arithmetic preserves percentage only. It does not preserve difficulty, variance, clustering or cohort size. The 2026 format has 180 questions in five locked sections of 36 questions and 42 minutes each; fewer items also make each raw mark a larger share of the paper.</p></div>
+          </details>
+          <details>
+            <summary><span>What changes after the result</span><i aria-hidden="true"></i></summary>
+            <div><p>Once official 2026 score–rank observations are available, this simulation should be replaced—not invisibly blended with the real curve. Until then, do not use it as the sole basis for a specialty, college or counselling decision.</p></div>
+          </details>
+        </div>
+
+        <aside class="sources-card" data-reveal aria-labelledby="sourcesTitle">
+          <div class="sources-head">
+            <span class="source-pulse" aria-hidden="true"></span>
+            <div><span class="summary-kicker">Source desk</span><h3 id="sourcesTitle">What this build checked</h3></div>
+          </div>
+          <ol>
+            <li><a href="https://natboard.edu.in/viewnbeexam?exam=neetpg" target="_blank" rel="noreferrer"><span>Official exam notices and bulletin</span><small>NBEMS</small></a></li>
+            <li><a href="https://ftp.natboard.edu.in/viewNotice.php?NBE=bFdxVDlzczdwNGpyR09vTWtEN25HZz09" target="_blank" rel="noreferrer"><span>Five time-bound sections</span><small>NBEMS · official notice</small></a></li>
+            <li><a href="https://www.shiksha.com/news/medicine-health-sciences-neet-pg-2026-265980-candidates-appeared-total-attendance-centre-details-released-natboard-edu-in-blogId-240235" target="_blank" rel="noreferrer"><span>2026 appeared-candidate count</span><small>Shiksha · 31 Aug 2026</small></a></li>
+            <li><a href="https://medicine.careers360.com/articles/neet-pg-marks-vs-rank" target="_blank" rel="noreferrer"><span>2025 historical marks–rank bands</span><small>Careers360 · checked 02 Sep 2026</small></a></li>
+            <li><a href="https://indianexpress.com/article/education/neet-pg-2026-nbems-warns-against-sharing-recall-based-questions-10860518/" target="_blank" rel="noreferrer"><span>Result-period context and Jaipur re-test</span><small>The Indian Express · 02 Sep 2026</small></a></li>
+          </ol>
+          <p class="source-footnote">Source pages can update. Model inputs were frozen on 03 Sep 2026, before the official score–rank curve.</p>
+        </aside>
+      </div>
+    </section>
+
+    <section class="support section-shell" id="support" aria-labelledby="supportTitle">
+      <div class="support-card magnetic-surface" data-reveal>
+        <div class="support-orbit" aria-hidden="true"><i></i><i></i><span>R<small>26</small></span></div>
+        <div class="support-copy">
+          <p class="eyebrow">Keep the weird useful stuff free</p>
+          <h2 id="supportTitle">Fuel the next tiny innovation.</h2>
+          <p>If RankLab helped and you want more free experiments like this to exist, contribute any amount you feel like. No perks, no pressure, no guilt trip.</p>
+          <p class="support-thanks"><span aria-hidden="true">✦</span><strong>Even thinking about supporting is kind. Actually donating is generous. Either way, thank you for being here.</strong></p>
+        </div>
+        <div class="support-actions">
+          <a class="support-button" href="https://razorpay.me/@docayushyadav" target="_blank" rel="noopener noreferrer nofollow external">Donate via Razorpay <span aria-hidden="true">↗</span></a>
+          <a class="feedback-button" href="feedback.html">Send feedback <span aria-hidden="true">→</span></a>
+          <small>Razorpay opens in a separate page. Contributions are voluntary.</small>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="section-shell footer-inner">
+      <div><span class="brand-mark small-mark" aria-hidden="true">R<span>26</span></span><p>Built for calmer decisions and one less doom-scroll.</p></div>
+      <div class="footer-meta">
+        <p>Independent estimate · Not affiliated with NBEMS or MCC · No analytics or form storage</p>
+        <nav aria-label="Legal and contact links"><a href="feedback.html">Feedback</a><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a></nav>
+      </div>
+    </div>
+  </footer>
+
+  <dialog id="helpDialog" class="help-dialog" aria-labelledby="helpTitle">
+    <button class="dialog-close" id="helpClose" type="button" aria-label="Close help"><span aria-hidden="true"></span></button>
+    <div class="dialog-kicker"><span>Quick read</span><span>45 sec</span></div>
+    <h2 id="helpTitle">How to use RankLab</h2>
+    <ol class="help-steps">
+      <li><span>1</span><div><strong>Set your expected marks</strong><p>Drag the slider, type a score, or use ±5 for one recalled wrong↔correct change.</p></div></li>
+      <li><span>2</span><div><strong>Read the centre and the band</strong><p>The weighted AIR is the default planning point. The harder-to-easier scenario band matters more before results.</p></div></li>
+      <li><span>3</span><div><strong>Compare scenarios</strong><p>Harder is favourable at a fixed mark; easier is adverse. Recent and mixed show the two middle model shapes.</p></div></li>
+      <li><span>4</span><div><strong>Plan, don’t conclude</strong><p>Use the easier-paper edge for conservative shortlisting. Replace every estimate with your official AIR when released.</p></div></li>
+    </ol>
+    <div class="dialog-note"><span aria-hidden="true">i</span><p>A wrong→correct recall changes the score by <strong>+5</strong>: the −1 is removed and +4 is added.</p></div>
+    <div class="dialog-note haptic-note"><span aria-hidden="true">∿</span><p>Browsers with vibration support add subtle haptics. Everywhere else, the animated press response does the talking.</p></div>
+    <button class="dialog-done" id="helpDone" type="button">Got it <span aria-hidden="true">→</span></button>
+  </dialog>
+
+  <aside class="install-nudge" id="installNudge" aria-labelledby="installNudgeTitle" aria-live="polite" hidden>
+    <button class="install-nudge-close" id="installNudgeClose" type="button" aria-label="Dismiss app installation suggestion"><span aria-hidden="true"></span></button>
+    <div class="install-app-orbit" aria-hidden="true">
+      <i></i><i></i>
+      <span>R<small>26</small></span>
+    </div>
+    <div class="install-nudge-copy">
+      <span class="install-nudge-kicker" id="installNudgeKicker">Native install ready</span>
+      <strong id="installNudgeTitle">One tap. RankLab becomes an app.</strong>
+      <p id="installNudgeCopy">Full-screen, offline-ready, and out of your tab jungle.</p>
+    </div>
+    <div class="install-nudge-actions">
+      <button class="install-primary" id="installPrimary" type="button"><span id="installPrimaryLabel">Install now</span><i aria-hidden="true">↓</i></button>
+      <button class="install-later" id="installLater" type="button">Not now</button>
+    </div>
+  </aside>
+
+  <div class="quip-toast" id="quipToast" role="status" aria-live="polite" aria-atomic="true">
+    <span aria-hidden="true">✦</span>
+    <p id="quipText">Tiny tap. Big consequences.</p>
+  </div>
+
+  <script src="model-data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,35 @@
+RANKLAB PROPRIETARY NOTICE
+Copyright (c) 2026 Ayush Yadav. All rights reserved.
+
+RankLab, including its source code, compiled assets, interface design, written
+content, marks-to-rank model, and supplied datasets, is proprietary material.
+No open-source licence is granted.
+
+LIMITED PERMISSION
+
+A human visitor may manually use the published RankLab interface for personal,
+non-commercial purposes, subject to the Terms of Use bundled with the site.
+
+PROHIBITED USE
+
+Without prior written permission from Ayush Yadav, you may not copy, modify,
+distribute, sublicense, sell, mirror, frame, reproduce, republish, reverse
+engineer, or create derivative works from any part of RankLab.
+
+Automated access is prohibited. This includes access by bots, crawlers,
+scrapers, headless browsers, agents, bulk downloaders, data-mining systems, or
+similar tools. RankLab content may not be used to build datasets, train or
+evaluate machine-learning or artificial-intelligence systems, power retrieval
+systems, or provide a competing or derivative service.
+
+Automated systems strictly necessary for ordinary hosting, security, browser
+operation, or accessibility on behalf of a human visitor are excluded only to
+the minimum extent required for those functions.
+
+NO WARRANTY
+
+RankLab and its model outputs are provided "as is" without warranty. The model
+is a pre-result research estimate and is not official NEET-PG, NBEMS, MCC,
+medical, admissions, or counselling advice.
+
+Permission requests: Ayushiamazon1@gmail.com

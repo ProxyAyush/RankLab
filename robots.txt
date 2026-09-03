@@ -1,0 +1,5 @@
+# RankLab is proprietary and intended only for manual use by human visitors.
+# Automated crawling, scraping, indexing, dataset creation, and AI/ML use are prohibited.
+User-agent: *
+Disallow: /
+
