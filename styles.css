@@ -1884,6 +1884,10 @@ footer {
 .footer-inner p { margin: 0; color: var(--muted-2); font-size: 11px; }
 
 .help-dialog {
+  position: fixed;
+  inset: 0;
+  margin: auto;
+  z-index: 10001;
   width: min(560px, calc(100vw - 28px));
   max-height: min(760px, calc(100dvh - 28px));
   padding: clamp(24px, 5vw, 42px);
@@ -1895,30 +1899,26 @@ footer {
     var(--panel-raised);
   box-shadow: 0 45px 120px rgba(0, 0, 0, 0.65);
   color: var(--text);
-  opacity: 0;
-  transform: translateY(18px) scale(0.97);
-  transition: opacity 250ms ease, transform 350ms var(--ease), overlay 250ms allow-discrete, display 250ms allow-discrete;
+  box-sizing: border-box;
+  transition: opacity 220ms ease, transform 260ms var(--ease);
+}
+
+.help-dialog:not([open]) {
+  display: none !important;
 }
 
 .help-dialog[open] {
-  opacity: 1;
-  transform: none;
-}
-
-@starting-style {
-  .help-dialog[open] { opacity: 0; transform: translateY(18px) scale(0.97); }
+  display: block !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  transform: none !important;
+  pointer-events: auto !important;
 }
 
 .help-dialog::backdrop {
   background: rgba(2, 5, 6, 0.76);
   backdrop-filter: blur(9px);
-  opacity: 0;
-  transition: opacity 250ms ease, overlay 250ms allow-discrete, display 250ms allow-discrete;
 }
-
-.help-dialog[open]::backdrop { opacity: 1; }
-
-@starting-style { .help-dialog[open]::backdrop { opacity: 0; } }
 
 .dialog-close {
   position: absolute;
@@ -2157,7 +2157,6 @@ body,
 .story-card,
 .method-accordion,
 .sources-card,
-.help-dialog,
 footer {
   transition-property: color, background-color, border-color, box-shadow, filter;
   transition-duration: 420ms;

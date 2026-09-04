@@ -92,7 +92,15 @@
   let lastSliderHaptic = selectedMarks;
   let deferredInstallPrompt = null;
   let installNudgeTimer = null;
-  let recallAnswerState = null;
+  let recallAnswerState = {
+    correct: rawModel.userCase?.correct ?? 136,
+    wrong: rawModel.userCase?.wrong ?? 36,
+    unattempted: rawModel.userCase?.unattempted ?? 8,
+    marks: rawModel.userCase?.marks ?? 508,
+    total: rawModel.exam.questions,
+    validValues: true,
+    applied: true
+  };
   let recallDockTimer = null;
 
   const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
@@ -570,15 +578,31 @@
 
   function showModal(dialogElement, focusElement) {
     if (!dialogElement) return;
-    if (typeof dialogElement.showModal === "function") dialogElement.showModal();
-    else dialogElement.setAttribute("open", "");
+    try {
+      if (typeof dialogElement.showModal === "function") {
+        if (!dialogElement.open) dialogElement.showModal();
+      } else {
+        dialogElement.setAttribute("open", "");
+      }
+    } catch (_) {
+      dialogElement.setAttribute("open", "");
+    }
+    dialogElement.setAttribute("open", "");
     window.setTimeout(() => focusElement?.focus({ preventScroll: true }), 40);
   }
 
   function closeModal(dialogElement) {
     if (!dialogElement) return;
-    if (typeof dialogElement.close === "function") dialogElement.close();
-    else dialogElement.removeAttribute("open");
+    try {
+      if (typeof dialogElement.close === "function" && dialogElement.open) {
+        dialogElement.close();
+      } else {
+        dialogElement.removeAttribute("open");
+      }
+    } catch (_) {
+      dialogElement.removeAttribute("open");
+    }
+    dialogElement.removeAttribute("open");
   }
 
   function hideRecallScoreDock() {
@@ -667,21 +691,40 @@
   function setupAnswerCalculator() {
     if (!scoreCalculatorDialog || !scoreCalculatorForm || answerInputs.some((input) => !input)) return;
 
-    $("answerCalcOpen").addEventListener("click", openAnswerCalculator);
-    $("recallScoreEdit").addEventListener("click", openAnswerCalculator);
-    $("recallScoreDismiss").addEventListener("click", () => { haptic("soft"); hideRecallScoreDock(); });
-    $("scoreCalculatorClose").addEventListener("click", closeAnswerCalculator);
-    $("scoreCalculatorCancel").addEventListener("click", closeAnswerCalculator);
+    let dockDismissed = false;
+    $("answerCalcOpen")?.addEventListener("click", openAnswerCalculator);
+    $("recallScoreEdit")?.addEventListener("click", openAnswerCalculator);
+    $("recallScoreDismiss")?.addEventListener("click", () => {
+      haptic("soft");
+      dockDismissed = true;
+      hideRecallScoreDock();
+    });
+    $("scoreCalculatorClose")?.addEventListener("click", closeAnswerCalculator);
+    $("scoreCalculatorCancel")?.addEventListener("click", closeAnswerCalculator);
+
+    const syncDockScroll = () => {
+      if (dockDismissed || !recallScoreDock) return;
+      const predictor = $("predictor");
+      if (!predictor) return;
+      const rect = predictor.getBoundingClientRect();
+      if (rect.bottom < 140) {
+        showRecallScoreDock();
+      } else {
+        hideRecallScoreDock();
+      }
+    };
+    window.addEventListener("scroll", syncDockScroll, { passive: true });
+    syncDockScroll();
 
     answerInputs.forEach((input) => input.addEventListener("input", updateAnswerCalculator));
     document.querySelectorAll("[data-answer-step]").forEach((button) => {
       button.addEventListener("click", () => {
         const input = $(button.dataset.answerInput);
+        if (!input) return;
         const next = clamp((Number(input.value) || 0) + Number(button.dataset.answerStep), 0, model.questions);
         input.value = String(next);
         haptic("soft");
         updateAnswerCalculator();
-        input.focus({ preventScroll: true });
       });
     });
 
@@ -701,6 +744,7 @@
         haptic("success");
         showQuip("Answers counted. Same score, now with receipts.");
       }
+      dockDismissed = false;
       showRecallScoreDock();
       closeModal(scoreCalculatorDialog);
     });

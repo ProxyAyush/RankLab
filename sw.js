@@ -1,4 +1,4 @@
-const CACHE_NAME = "ranklab-shell-v10-answer-calculator";
+const CACHE_NAME = "ranklab-shell-v11-calc-fix";
 const ROOT_URL = new URL("./", self.location).href;
 const FALLBACK_URL = new URL("./index.html", self.location).href;
 const APP_SHELL = [
