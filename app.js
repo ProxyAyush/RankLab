@@ -71,6 +71,10 @@
   const installAppOpen = $("installAppOpen");
   const installNudge = $("installNudge");
   const installPrimary = $("installPrimary");
+  const scoreCalculatorDialog = $("scoreCalculatorDialog");
+  const scoreCalculatorForm = $("scoreCalculatorForm");
+  const answerInputs = [$("correctAnswers"), $("wrongAnswers"), $("unattemptedAnswers")];
+  const recallScoreDock = $("recallScoreDock");
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
   const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)");
   const numberFormat = new Intl.NumberFormat("en-IN", { maximumFractionDigits: 0 });
@@ -88,6 +92,8 @@
   let lastSliderHaptic = selectedMarks;
   let deferredInstallPrompt = null;
   let installNudgeTimer = null;
+  let recallAnswerState = null;
+  let recallDockTimer = null;
 
   const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
   const format = (value) => numberFormat.format(Math.round(value));
@@ -219,6 +225,7 @@
       window.clearTimeout(installNudgeTimer);
       installNudgeTimer = null;
       installNudge.classList.remove("is-visible");
+      document.body.classList.remove("has-install-nudge");
       if (remember) rememberTime("ranklab-install-dismissed-at");
       window.setTimeout(() => { installNudge.hidden = true; }, reduceMotion.matches ? 0 : 360);
     };
@@ -227,6 +234,7 @@
       if (!canRequestNativeInstall() || isStandalone() || wasInstalledRecently() || (!force && wasDismissedRecently())) return;
       updateInstallCopy();
       installNudge.hidden = false;
+      document.body.classList.add("has-install-nudge");
       requestAnimationFrame(() => requestAnimationFrame(() => installNudge.classList.add("is-visible")));
     };
 
@@ -521,7 +529,9 @@
     const numeric = Number(nextMarks);
     if (!Number.isFinite(numeric)) return;
     const previous = selectedMarks;
-    selectedMarks = clamp(Math.round(numeric), model.minMarks, model.maxMarks);
+    const next = clamp(Math.round(numeric), model.minMarks, model.maxMarks);
+    if (!options.fromCalculator && recallAnswerState?.applied && next !== recallAnswerState.marks) hideRecallScoreDock();
+    selectedMarks = next;
     if (selectedMarks === previous) return;
 
     if (options.haptic) haptic(options.haptic);
@@ -556,6 +566,153 @@
       showQuip(lensQuips[selectedLens]);
     }
     scheduleRender();
+  }
+
+  function showModal(dialogElement, focusElement) {
+    if (!dialogElement) return;
+    if (typeof dialogElement.showModal === "function") dialogElement.showModal();
+    else dialogElement.setAttribute("open", "");
+    window.setTimeout(() => focusElement?.focus({ preventScroll: true }), 40);
+  }
+
+  function closeModal(dialogElement) {
+    if (!dialogElement) return;
+    if (typeof dialogElement.close === "function") dialogElement.close();
+    else dialogElement.removeAttribute("open");
+  }
+
+  function hideRecallScoreDock() {
+    if (!recallScoreDock || recallScoreDock.hidden) return;
+    window.clearTimeout(recallDockTimer);
+    recallScoreDock.classList.remove("is-visible");
+    document.body.classList.remove("has-recall-score");
+    recallDockTimer = window.setTimeout(() => { recallScoreDock.hidden = true; }, reduceMotion.matches ? 0 : 320);
+  }
+
+  function showRecallScoreDock() {
+    if (!recallScoreDock || !recallAnswerState) return;
+    window.clearTimeout(recallDockTimer);
+    $("recallDockMarks").textContent = String(recallAnswerState.marks);
+    $("recallDockBreakdown").textContent = `${recallAnswerState.correct}C · ${recallAnswerState.wrong}W · ${recallAnswerState.unattempted}U`;
+    recallScoreDock.hidden = false;
+    document.body.classList.add("has-recall-score");
+    requestAnimationFrame(() => requestAnimationFrame(() => recallScoreDock.classList.add("is-visible")));
+  }
+
+  function readAnswerCalculator() {
+    const values = answerInputs.map((input) => input.value.trim() === "" ? NaN : Number(input.value));
+    const validValues = values.every((value) => Number.isInteger(value) && value >= 0 && value <= model.questions);
+    const [correct, wrong, unattempted] = values;
+    const total = validValues ? correct + wrong + unattempted : NaN;
+    const marks = validValues ? correct * 4 - wrong : NaN;
+    return { correct, wrong, unattempted, total, marks, validValues };
+  }
+
+  function updateAnswerCalculator() {
+    const state = readAnswerCalculator();
+    const result = $("calculatorResult");
+    const useButton = $("scoreCalculatorUse");
+    let resultState = "pending";
+    let status = "Enter whole numbers from 0 to 180.";
+    let totalCopy = "Check the answer counts";
+
+    answerInputs.forEach((input) => {
+      const value = Number(input.value);
+      input.setAttribute("aria-invalid", String(input.value === "" || !Number.isInteger(value) || value < 0 || value > model.questions));
+    });
+
+    if (state.validValues) {
+      $("calculatedMarks").textContent = String(state.marks);
+      totalCopy = `${state.total} / ${model.questions} accounted`;
+      if (state.total < model.questions) {
+        status = `${model.questions - state.total} question${model.questions - state.total === 1 ? "" : "s"} left to account for.`;
+      } else if (state.total > model.questions) {
+        resultState = "error";
+        status = `Remove ${state.total - model.questions} answer${state.total - model.questions === 1 ? "" : "s"}.`;
+      } else if (state.marks < model.minMarks || state.marks > model.maxMarks) {
+        resultState = "outside";
+        status = `Marks calculated. Rank prediction currently covers ${model.minMarks}–${model.maxMarks}.`;
+      } else {
+        resultState = "ready";
+        status = "Ready for the predictor.";
+      }
+    } else {
+      $("calculatedMarks").textContent = "—";
+    }
+
+    $("calculatorTotal").textContent = totalCopy;
+    $("calculatorStatus").textContent = status;
+    result.dataset.state = resultState;
+    const canUse = resultState === "ready";
+    useButton.disabled = !canUse;
+    $("scoreCalculatorUseLabel").textContent = canUse
+      ? `Use ${state.marks} marks`
+      : resultState === "outside"
+        ? `Outside ${model.minMarks}–${model.maxMarks} range`
+        : "Complete all 180";
+    return { ...state, canUse };
+  }
+
+  function openAnswerCalculator() {
+    haptic("select");
+    updateAnswerCalculator();
+    showModal(scoreCalculatorDialog, $("correctAnswers"));
+  }
+
+  function closeAnswerCalculator() {
+    haptic("soft");
+    closeModal(scoreCalculatorDialog);
+  }
+
+  function setupAnswerCalculator() {
+    if (!scoreCalculatorDialog || !scoreCalculatorForm || answerInputs.some((input) => !input)) return;
+
+    $("answerCalcOpen").addEventListener("click", openAnswerCalculator);
+    $("recallScoreEdit").addEventListener("click", openAnswerCalculator);
+    $("recallScoreDismiss").addEventListener("click", () => { haptic("soft"); hideRecallScoreDock(); });
+    $("scoreCalculatorClose").addEventListener("click", closeAnswerCalculator);
+    $("scoreCalculatorCancel").addEventListener("click", closeAnswerCalculator);
+
+    answerInputs.forEach((input) => input.addEventListener("input", updateAnswerCalculator));
+    document.querySelectorAll("[data-answer-step]").forEach((button) => {
+      button.addEventListener("click", () => {
+        const input = $(button.dataset.answerInput);
+        const next = clamp((Number(input.value) || 0) + Number(button.dataset.answerStep), 0, model.questions);
+        input.value = String(next);
+        haptic("soft");
+        updateAnswerCalculator();
+        input.focus({ preventScroll: true });
+      });
+    });
+
+    scoreCalculatorForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const state = updateAnswerCalculator();
+      if (!state.canUse) return;
+      const previous = selectedMarks;
+      recallAnswerState = { ...state, applied: true };
+      setMarks(state.marks, {
+        fromCalculator: true,
+        haptic: state.marks === previous ? undefined : state.marks > previous ? "success" : "select",
+        celebrate: state.marks > previous,
+        quip: state.marks === previous ? undefined : "Answers counted. Curve updated. Brain tabs: one fewer."
+      });
+      if (state.marks === previous) {
+        haptic("success");
+        showQuip("Answers counted. Same score, now with receipts.");
+      }
+      showRecallScoreDock();
+      closeModal(scoreCalculatorDialog);
+    });
+
+    scoreCalculatorDialog.addEventListener("click", (event) => {
+      if (event.target !== scoreCalculatorDialog) return;
+      const rect = scoreCalculatorDialog.getBoundingClientRect();
+      const inside = event.clientX >= rect.left && event.clientX <= rect.right && event.clientY >= rect.top && event.clientY <= rect.bottom;
+      if (!inside) closeAnswerCalculator();
+    });
+
+    updateAnswerCalculator();
   }
 
   function scheduleRender() {
@@ -933,12 +1090,11 @@
   const dialog = $("helpDialog");
   const openDialog = () => {
     haptic("select");
-    if (typeof dialog.showModal === "function") dialog.showModal();
-    else dialog.setAttribute("open", "");
+    showModal(dialog);
   };
   const closeDialog = () => {
     haptic("soft");
-    return dialog.close ? dialog.close() : dialog.removeAttribute("open");
+    closeModal(dialog);
   };
   $("helpOpen").addEventListener("click", openDialog);
   $("helpClose").addEventListener("click", closeDialog);
@@ -983,6 +1139,7 @@
   }
 
   lensSwitch.dataset.index = "0";
+  setupAnswerCalculator();
   setupInstallExperience();
   setupBootSequence();
   commitTheme(document.documentElement.dataset.theme === "light" ? "light" : "dark", false);

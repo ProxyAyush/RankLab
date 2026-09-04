@@ -9,6 +9,8 @@ A fast, dependency-free marks-to-AIR explorer designed for GitHub Pages.
 - Interactive log-scale AIR curve with the full harder↔easier scenario envelope
 - Model-supplied local ranks-per-mark density
 - Seven recall-sensitivity states from −15 to +15 and a granular ±12-mark table
+- Progressive correct/wrong/unattempted calculator with live 180-question validation
+- Floating answer-score chip that follows the stats and reopens for instant edits
 - Plain-language explainer and dated source desk
 - Animated day/night themes that follow the device and remember the last choice
 - Reactive rank moods, playful microcopy, particle celebrations and touch ripples

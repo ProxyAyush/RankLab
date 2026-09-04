@@ -175,10 +175,11 @@
 
           <p class="control-note" id="lensNote">The planning centre: 45% recent baseline, 25% harder, 15% mixed and 15% easier-paper scenarios.</p>
 
-          <div class="scenario-note">
-            <span class="scenario-icon" aria-hidden="true">↗</span>
-            <p><strong>Your saved recall:</strong> 136 correct, 36 wrong, 8 unattempted = <strong>508 marks</strong>.</p>
-          </div>
+          <button class="scenario-note answer-calc-trigger" id="answerCalcOpen" type="button" aria-haspopup="dialog" aria-controls="scoreCalculatorDialog">
+            <span class="scenario-icon" aria-hidden="true">#</span>
+            <span class="answer-calc-copy"><strong>Calculate from answers</strong><small>Correct · wrong · unattempted</small></span>
+            <span class="answer-calc-arrow" aria-hidden="true">↗</span>
+          </button>
         </aside>
 
         <section class="result-panel magnetic-surface" aria-labelledby="resultTitle">
@@ -427,12 +428,68 @@
     </div>
   </footer>
 
+  <dialog id="scoreCalculatorDialog" class="help-dialog score-calculator-dialog" aria-labelledby="scoreCalculatorTitle" aria-describedby="scoreCalculatorIntro">
+    <button class="dialog-close" id="scoreCalculatorClose" type="button" aria-label="Close score calculator"><span aria-hidden="true"></span></button>
+    <div class="dialog-kicker"><span>Score calculator</span><span>180 questions</span></div>
+    <h2 id="scoreCalculatorTitle">Turn your recall into marks.</h2>
+    <p class="calculator-intro" id="scoreCalculatorIntro">Add what you got correct, wrong and left alone. RankLab uses <strong>+4</strong> for correct, <strong>−1</strong> for wrong and <strong>0</strong> for unattempted.</p>
+
+    <form id="scoreCalculatorForm" novalidate>
+      <fieldset class="answer-fields">
+        <legend class="sr-only">Answer counts</legend>
+
+        <div class="answer-field answer-field-correct">
+          <div class="answer-field-head"><label for="correctAnswers">Correct</label><span>+4 each</span></div>
+          <div class="answer-stepper">
+            <button type="button" data-answer-input="correctAnswers" data-answer-step="-1" aria-label="Decrease correct answers">−</button>
+            <input id="correctAnswers" name="correct" type="number" min="0" max="180" step="1" inputmode="numeric" autocomplete="off" value="136" aria-describedby="calculatorStatus">
+            <button type="button" data-answer-input="correctAnswers" data-answer-step="1" aria-label="Increase correct answers">+</button>
+          </div>
+        </div>
+
+        <div class="answer-field answer-field-wrong">
+          <div class="answer-field-head"><label for="wrongAnswers">Wrong</label><span>−1 each</span></div>
+          <div class="answer-stepper">
+            <button type="button" data-answer-input="wrongAnswers" data-answer-step="-1" aria-label="Decrease wrong answers">−</button>
+            <input id="wrongAnswers" name="wrong" type="number" min="0" max="180" step="1" inputmode="numeric" autocomplete="off" value="36" aria-describedby="calculatorStatus">
+            <button type="button" data-answer-input="wrongAnswers" data-answer-step="1" aria-label="Increase wrong answers">+</button>
+          </div>
+        </div>
+
+        <div class="answer-field answer-field-unattempted">
+          <div class="answer-field-head"><label for="unattemptedAnswers">Unattempted</label><span>0 each</span></div>
+          <div class="answer-stepper">
+            <button type="button" data-answer-input="unattemptedAnswers" data-answer-step="-1" aria-label="Decrease unattempted answers">−</button>
+            <input id="unattemptedAnswers" name="unattempted" type="number" min="0" max="180" step="1" inputmode="numeric" autocomplete="off" value="8" aria-describedby="calculatorStatus">
+            <button type="button" data-answer-input="unattemptedAnswers" data-answer-step="1" aria-label="Increase unattempted answers">+</button>
+          </div>
+        </div>
+      </fieldset>
+
+      <div class="calculator-result" id="calculatorResult" data-state="ready">
+        <div class="calculator-score">
+          <span>Calculated marks</span>
+          <strong><output id="calculatedMarks">508</output><small>/720</small></strong>
+        </div>
+        <div class="calculator-accounting">
+          <strong id="calculatorTotal">180 / 180 accounted</strong>
+          <p id="calculatorStatus" role="status" aria-live="polite">Ready for the predictor.</p>
+        </div>
+      </div>
+
+      <div class="calculator-actions">
+        <button class="calculator-cancel" id="scoreCalculatorCancel" type="button">Not now</button>
+        <button class="dialog-done calculator-use" id="scoreCalculatorUse" type="submit"><span id="scoreCalculatorUseLabel">Use 508 marks</span><i aria-hidden="true">→</i></button>
+      </div>
+    </form>
+  </dialog>
+
   <dialog id="helpDialog" class="help-dialog" aria-labelledby="helpTitle">
     <button class="dialog-close" id="helpClose" type="button" aria-label="Close help"><span aria-hidden="true"></span></button>
     <div class="dialog-kicker"><span>Quick read</span><span>45 sec</span></div>
     <h2 id="helpTitle">How to use RankLab</h2>
     <ol class="help-steps">
-      <li><span>1</span><div><strong>Set your expected marks</strong><p>Drag the slider, type a score, or use ±5 for one recalled wrong↔correct change.</p></div></li>
+      <li><span>1</span><div><strong>Set or calculate your marks</strong><p>Drag, type, use ±5, or open “Calculate from answers” to score your correct, wrong and unattempted questions.</p></div></li>
       <li><span>2</span><div><strong>Read the centre and the band</strong><p>The weighted AIR is the default planning point. The harder-to-easier scenario band matters more before results.</p></div></li>
       <li><span>3</span><div><strong>Compare scenarios</strong><p>Harder is favourable at a fixed mark; easier is adverse. Recent and mixed show the two middle model shapes.</p></div></li>
       <li><span>4</span><div><strong>Plan, don’t conclude</strong><p>Use the easier-paper edge for conservative shortlisting. Replace every estimate with your official AIR when released.</p></div></li>
@@ -457,6 +514,16 @@
       <button class="install-primary" id="installPrimary" type="button"><span id="installPrimaryLabel">Install now</span><i aria-hidden="true">↓</i></button>
       <button class="install-later" id="installLater" type="button">Not now</button>
     </div>
+  </aside>
+
+  <aside class="recall-score-dock" id="recallScoreDock" aria-label="Calculated answer score" hidden>
+    <button class="recall-score-edit" id="recallScoreEdit" type="button" aria-haspopup="dialog" aria-controls="scoreCalculatorDialog">
+      <span class="recall-dock-kicker">From your answers</span>
+      <strong><span id="recallDockMarks">508</span><small>/720</small></strong>
+      <span class="recall-dock-breakdown" id="recallDockBreakdown">136C · 36W · 8U</span>
+      <span class="recall-dock-edit-label">Edit <i aria-hidden="true">↗</i></span>
+    </button>
+    <button class="recall-score-dismiss" id="recallScoreDismiss" type="button" aria-label="Hide calculated score"><span aria-hidden="true"></span></button>
   </aside>
 
   <div class="quip-toast" id="quipToast" role="status" aria-live="polite" aria-atomic="true">

@@ -52,6 +52,13 @@ assert(index.includes('min="350" max="650"'), "Predictor inputs do not expose th
 assert(index.includes("Pre-result research model"), "Prominent pre-result disclaimer is missing");
 assert(index.includes("https://razorpay.me/@docayushyadav"), "Razorpay support link is missing");
 assert(["weighted", "harder", "baseline", "mixed", "easier"].every((key) => index.includes(`data-lens="${key}"`)), "Scenario controls are incomplete");
+assert(["answerCalcOpen", "scoreCalculatorDialog", "correctAnswers", "wrongAnswers", "unattemptedAnswers", "recallScoreDock", "recallScoreEdit"].every((id) => index.includes(`id="${id}"`)), "Answer calculator UI is incomplete");
+
+const app = readFileSync(join(root, "app.js"), "utf8");
+assert(app.includes("correct * 4 - wrong"), "NEET-PG +4/−1 score formula is missing");
+assert(app.includes("state.total < model.questions") && app.includes("state.total > model.questions"), "180-question validation is incomplete");
+assert(app.includes("state.marks < model.minMarks || state.marks > model.maxMarks"), "Calculator does not guard the predictor range");
+assert(!/fetch\s*\([^)]*(?:correct|wrong|unattempted)/i.test(app), "Answer recall must remain device-local");
 
 const feedback = readFileSync(join(root, "feedback.html"), "utf8");
 assert(!/<form[^>]+action=/i.test(feedback), "Feedback form must not submit to a server");
