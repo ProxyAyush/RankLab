@@ -93,15 +93,17 @@
   let deferredInstallPrompt = null;
   let installNudgeTimer = null;
   let recallAnswerState = {
-    correct: rawModel.userCase?.correct ?? 136,
-    wrong: rawModel.userCase?.wrong ?? 36,
-    unattempted: rawModel.userCase?.unattempted ?? 8,
-    marks: rawModel.userCase?.marks ?? 508,
-    total: rawModel.exam.questions,
+    correct: model.userCase.correct,
+    wrong: model.userCase.wrong,
+    unattempted: model.userCase.unattempted,
+    total: model.questions,
+    marks: model.userCase.marks,
     validValues: true,
-    applied: true
+    canUse: true,
+    applied: false
   };
   let recallDockTimer = null;
+  let tableMode = "questions";
 
   const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
   const format = (value) => numberFormat.format(Math.round(value));
@@ -623,6 +625,52 @@
     requestAnimationFrame(() => requestAnimationFrame(() => recallScoreDock.classList.add("is-visible")));
   }
 
+  function getActiveAnswerState() {
+    if (!recallAnswerState) return null;
+    const total = recallAnswerState.correct + recallAnswerState.wrong + recallAnswerState.unattempted;
+    const marks = recallAnswerState.correct * 4 - recallAnswerState.wrong;
+    if (total !== model.questions || marks !== selectedMarks) return null;
+    return { ...recallAnswerState, total, marks };
+  }
+
+  function answerScenario(state, correctDelta) {
+    const correct = state.correct + correctDelta;
+    const wrong = state.wrong - correctDelta;
+    const unattempted = state.unattempted;
+    if (correct < 0 || wrong < 0 || unattempted < 0) return null;
+    return {
+      correct,
+      wrong,
+      unattempted,
+      total: model.questions,
+      marks: correct * 4 - wrong,
+      validValues: true,
+      canUse: true,
+      applied: true
+    };
+  }
+
+  function syncAnswerInputs(state) {
+    answerInputs[0].value = String(state.correct);
+    answerInputs[1].value = String(state.wrong);
+    answerInputs[2].value = String(state.unattempted);
+    updateAnswerCalculator();
+  }
+
+  function applyAnswerScenario(state, options = {}) {
+    if (!state || state.total !== model.questions || state.marks < model.minMarks || state.marks > model.maxMarks) return;
+    const previous = selectedMarks;
+    recallAnswerState = { ...state, applied: true };
+    syncAnswerInputs(recallAnswerState);
+    setMarks(state.marks, { ...options, fromCalculator: true });
+    if (state.marks === previous) {
+      if (options.haptic) haptic(options.haptic);
+      if (options.quip) showQuip(typeof options.quip === "function" ? options.quip(0) : options.quip);
+      scheduleRender();
+    }
+    showRecallScoreDock();
+  }
+
   function readAnswerCalculator() {
     const values = answerInputs.map((input) => input.value.trim() === "" ? NaN : Number(input.value));
     const validValues = values.every((value) => Number.isInteger(value) && value >= 0 && value <= model.questions);
@@ -732,20 +780,13 @@
       event.preventDefault();
       const state = updateAnswerCalculator();
       if (!state.canUse) return;
-      const previous = selectedMarks;
-      recallAnswerState = { ...state, applied: true };
-      setMarks(state.marks, {
-        fromCalculator: true,
-        haptic: state.marks === previous ? undefined : state.marks > previous ? "success" : "select",
-        celebrate: state.marks > previous,
-        quip: state.marks === previous ? undefined : "Answers counted. Curve updated. Brain tabs: one fewer."
-      });
-      if (state.marks === previous) {
-        haptic("success");
-        showQuip("Answers counted. Same score, now with receipts.");
-      }
+      const sameScore = state.marks === selectedMarks;
       dockDismissed = false;
-      showRecallScoreDock();
+      applyAnswerScenario(state, {
+        haptic: sameScore ? "success" : state.marks > selectedMarks ? "success" : "select",
+        celebrate: state.marks > selectedMarks,
+        quip: sameScore ? "Answers counted. Same score, now with receipts." : "Answers counted. Curve updated. Brain tabs: one fewer."
+      });
       closeModal(scoreCalculatorDialog);
     });
 
@@ -769,47 +810,97 @@
 
   function renderRecall(currentRank, key) {
     const rail = $("recallRail");
-    const deltas = [-15, -10, -5, 0, 5, 10, 15];
     const fragment = document.createDocumentFragment();
+    const answerState = getActiveAnswerState();
 
-    deltas.forEach((delta) => {
-      const mark = clamp(selectedMarks + delta, model.minMarks, model.maxMarks);
-      const result = rankAt(mark, key);
-      const movement = currentRank - result;
-      const card = document.createElement("button");
-      card.type = "button";
-      card.className = `recall-card magnetic-surface${delta === 0 ? " is-current" : ""}`;
-      card.dataset.mark = String(mark);
+    rail.classList.toggle("is-question-view", Boolean(answerState));
 
-      const scenario = delta === 0
-        ? "Your score"
-        : `${Math.abs(delta / 5)} flip${Math.abs(delta) === 5 ? "" : "s"} ${delta > 0 ? "better" : "worse"}`;
-      const movementCopy = delta === 0
-        ? "Weighted model centre"
-        : `<strong>${format(Math.abs(movement))}</strong> places ${movement >= 0 ? "better" : "worse"}`;
+    if (answerState) {
+      [-3, -2, -1, 0, 1, 2, 3].forEach((correctDelta) => {
+        const scenarioState = answerScenario(answerState, correctDelta);
+        if (!scenarioState) return;
+        const inRange = scenarioState.marks >= model.minMarks && scenarioState.marks <= model.maxMarks;
+        const result = inRange ? rankAt(scenarioState.marks, key) : null;
+        const movement = inRange ? currentRank - result : 0;
+        const card = document.createElement("button");
+        card.type = "button";
+        card.disabled = !inRange;
+        card.className = `recall-card magnetic-surface question-recall-card${correctDelta === 0 ? " is-current" : ""}${inRange ? "" : " is-outside"}`;
+        card.dataset.mark = String(scenarioState.marks);
 
-      card.setAttribute("aria-label", `${scenario}: ${mark} marks, predicted AIR ${format(result)}`);
-      card.innerHTML = `
-        <span class="recall-delta"><span>${scenario}</span><i aria-hidden="true">${delta > 0 ? "↗" : delta < 0 ? "↘" : "·"}</i></span>
-        <span><strong class="recall-rank">AIR ${format(result)}</strong><span class="recall-move">${movementCopy}</span></span>
-      `;
-      card.addEventListener("click", () => {
-        setMarks(mark, {
-          haptic: delta > 0 ? "success" : "tap",
-          celebrate: delta > 0,
-          quip: delta > 0 ? "Plot twist accepted. Nice." : delta < 0 ? "Stress-tested. No catastrophising allowed." : "Back to your selected score."
-        });
-        marksInput.focus({ preventScroll: true });
+        const currentCopy = correctDelta === 0 ? " · now" : "";
+        const markDelta = scenarioState.marks - answerState.marks;
+        const movementCopy = correctDelta === 0
+          ? "Current weighted centre"
+          : inRange
+            ? `<strong>${format(Math.abs(movement))}</strong> places ${movement >= 0 ? "better" : "worse"}`
+            : `Outside ${model.minMarks}–${model.maxMarks}`;
+
+        card.setAttribute("aria-label", `${scenarioState.correct} correct, ${scenarioState.wrong} wrong, ${scenarioState.unattempted} unattempted, ${scenarioState.marks} marks${inRange ? `, predicted AIR ${format(result)}` : ", outside the model range"}`);
+        card.innerHTML = `
+          <span class="recall-delta"><span>${scenarioState.correct} correct${currentCopy}</span><i aria-hidden="true">${correctDelta > 0 ? "↗" : correctDelta < 0 ? "↘" : "·"}</i></span>
+          <span class="recall-answer-mix"><strong>${scenarioState.wrong}</strong> wrong <i>·</i> <strong>${scenarioState.unattempted}</strong> unattempted <i>·</i> <strong>${scenarioState.marks}</strong> marks</span>
+          <span><strong class="recall-rank">${inRange ? `AIR ${format(result)}` : "Not modelled"}</strong><span class="recall-move">${correctDelta === 0 ? "" : `${correctDelta > 0 ? "+" : ""}${correctDelta} correct · ${markDelta > 0 ? "+" : ""}${markDelta} marks · `}${movementCopy}</span></span>
+        `;
+
+        if (inRange) {
+          card.addEventListener("click", () => {
+            applyAnswerScenario(scenarioState, {
+              haptic: correctDelta > 0 ? "success" : correctDelta < 0 ? "tap" : "select",
+              celebrate: correctDelta > 0,
+              quip: correctDelta > 0
+                ? "One more answer rescued. Rank curve duly informed."
+                : correctDelta < 0
+                  ? "Counterfactual checked. Panic not invited."
+                  : "Current answer mix pinned."
+            });
+          });
+        }
+        fragment.appendChild(card);
       });
-      fragment.appendChild(card);
-    });
+    } else {
+      [-15, -10, -5, 0, 5, 10, 15].forEach((delta) => {
+        const mark = clamp(selectedMarks + delta, model.minMarks, model.maxMarks);
+        const result = rankAt(mark, key);
+        const movement = currentRank - result;
+        const card = document.createElement("button");
+        card.type = "button";
+        card.className = `recall-card magnetic-surface${delta === 0 ? " is-current" : ""}`;
+        card.dataset.mark = String(mark);
+
+        const scenario = delta === 0
+          ? "Your score"
+          : `${Math.abs(delta / 5)} flip${Math.abs(delta) === 5 ? "" : "s"} ${delta > 0 ? "better" : "worse"}`;
+        const movementCopy = delta === 0
+          ? "Add an answer breakdown for MCQ view"
+          : `<strong>${format(Math.abs(movement))}</strong> places ${movement >= 0 ? "better" : "worse"}`;
+
+        card.setAttribute("aria-label", `${scenario}: ${mark} marks, predicted AIR ${format(result)}`);
+        card.innerHTML = `
+          <span class="recall-delta"><span>${scenario}</span><i aria-hidden="true">${delta > 0 ? "↗" : delta < 0 ? "↘" : "·"}</i></span>
+          <span><strong class="recall-rank">AIR ${format(result)}</strong><span class="recall-move">${movementCopy}</span></span>
+        `;
+        card.addEventListener("click", () => {
+          setMarks(mark, {
+            haptic: delta > 0 ? "success" : "tap",
+            celebrate: delta > 0,
+            quip: delta > 0 ? "Plot twist accepted. Nice." : delta < 0 ? "Stress-tested. No catastrophising allowed." : "Back to your selected score."
+          });
+        });
+        fragment.appendChild(card);
+      });
+    }
 
     rail.replaceChildren(fragment);
     setupMagneticSurfaces(rail);
   }
 
-  function renderTable() {
+  function renderMarksTable() {
     const body = $("scoreTable");
+    $("scoreTableHead").innerHTML = "<tr><th scope=\"col\">Marks</th><th scope=\"col\">Weighted AIR</th><th scope=\"col\">Recent baseline</th><th scope=\"col\">Scenario range</th><th scope=\"col\">Percentile</th><th scope=\"col\">Ranks / mark</th></tr>";
+    $("tableSummaryKicker").textContent = "Score neighbourhood";
+    $("tableSummaryText").textContent = `See every mark around ${selectedMarks}`;
+    $("tableModeNote").textContent = "The technical view: each row moves one raw mark, independent of how that mark changed.";
     const fragment = document.createDocumentFragment();
     const highMark = clamp(selectedMarks + 12, model.minMarks, model.maxMarks);
     const lowMark = clamp(selectedMarks - 12, model.minMarks, model.maxMarks);
@@ -830,18 +921,114 @@
         <td>${percentile(base).toFixed(2)}%</td>
         <td>${format(localDensity(mark, "air"))}</td>
       `;
-      row.addEventListener("click", () => setMarks(mark, { haptic: "soft" }));
+      const activate = () => {
+        setMarks(mark, {
+          haptic: mark === selectedMarks ? "select" : mark > selectedMarks ? "success" : "tap",
+          celebrate: mark > selectedMarks,
+          quip: mark === selectedMarks ? "Current score selected." : `Jumped to ${mark}.`
+        });
+      };
+      row.addEventListener("click", activate);
       row.addEventListener("keydown", (event) => {
         if (event.key === "Enter" || event.key === " ") {
           event.preventDefault();
-          setMarks(mark);
+          activate();
         }
       });
       fragment.appendChild(row);
     }
 
     body.replaceChildren(fragment);
-    $("tableMark").textContent = String(selectedMarks);
+  }
+
+  function renderQuestionTable() {
+    const body = $("scoreTable");
+    const head = $("scoreTableHead");
+    const answerState = getActiveAnswerState();
+    head.innerHTML = "<tr><th scope=\"col\">Change</th><th scope=\"col\">Correct</th><th scope=\"col\">Wrong</th><th scope=\"col\">Unattempted</th><th scope=\"col\">Marks</th><th scope=\"col\">Weighted AIR</th><th scope=\"col\">Rank movement</th></tr>";
+    $("tableSummaryKicker").textContent = "Question neighbourhood";
+
+    if (!answerState) {
+      $("tableSummaryText").textContent = "Connect an answer breakdown to this score";
+      $("tableModeNote").textContent = "Correct-count ranks need to know what became correct. Add your answer breakdown or switch to Every mark.";
+      const row = document.createElement("tr");
+      row.className = "table-empty-row";
+      row.innerHTML = '<td colspan="7"><strong>Question view needs your answer mix.</strong><span>Marks alone cannot tell whether a question was wrong or unattempted.</span><button type="button">Calculate from answers <i aria-hidden="true">→</i></button></td>';
+      row.querySelector("button").addEventListener("click", openAnswerCalculator);
+      body.replaceChildren(row);
+      return;
+    }
+
+    $("tableSummaryText").textContent = `See ranks around ${answerState.correct} correct answers`;
+    $("tableModeNote").textContent = `Each step swaps one wrong answer to correct. Unattempted stays at ${answerState.unattempted}, so one step changes the score by five marks.`;
+    const currentRank = rankAt(answerState.marks, "air");
+    const fragment = document.createDocumentFragment();
+
+    for (let correctDelta = 6; correctDelta >= -6; correctDelta -= 1) {
+      const scenarioState = answerScenario(answerState, correctDelta);
+      if (!scenarioState) continue;
+      const inRange = scenarioState.marks >= model.minMarks && scenarioState.marks <= model.maxMarks;
+      const result = inRange ? rankAt(scenarioState.marks, "air") : null;
+      const movement = inRange ? currentRank - result : 0;
+      const row = document.createElement("tr");
+      row.className = `${correctDelta === 0 ? "is-selected" : ""}${inRange ? "" : " is-outside"}`.trim();
+      if (inRange) row.tabIndex = 0;
+      const changeLabel = correctDelta === 0 ? "Current" : `${correctDelta > 0 ? "+" : ""}${correctDelta} correct`;
+      const wrongShift = correctDelta === 0 ? "Your answer mix" : `${correctDelta > 0 ? "−" : "+"}${Math.abs(correctDelta)} wrong`;
+      const movementCopy = correctDelta === 0
+        ? "—"
+        : inRange
+          ? `${movement >= 0 ? "↑" : "↓"} ${format(Math.abs(movement))} ${movement >= 0 ? "better" : "worse"}`
+          : `Outside ${model.minMarks}–${model.maxMarks}`;
+      row.innerHTML = `
+        <td><span class="table-change">${changeLabel}<small>${wrongShift}</small></span></td>
+        <td><strong>${scenarioState.correct}</strong></td>
+        <td>${scenarioState.wrong}</td>
+        <td>${scenarioState.unattempted}</td>
+        <td>${scenarioState.marks}</td>
+        <td>${inRange ? format(result) : "—"}</td>
+        <td class="rank-movement ${movement > 0 ? "is-better" : movement < 0 ? "is-worse" : ""}">${movementCopy}</td>
+      `;
+
+      if (inRange) {
+        const activate = () => applyAnswerScenario(scenarioState, {
+          haptic: correctDelta > 0 ? "success" : correctDelta < 0 ? "tap" : "select",
+          celebrate: correctDelta > 0,
+          quip: correctDelta > 0
+            ? `${correctDelta} more correct. That is ${correctDelta * 5} marks with intent.`
+            : correctDelta < 0
+              ? "Lower scenario checked. Now back to planning, not spiralling."
+              : "Current answer mix pinned."
+        });
+        row.addEventListener("click", activate);
+        row.addEventListener("keydown", (event) => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            activate();
+          }
+        });
+      }
+      fragment.appendChild(row);
+    }
+
+    body.replaceChildren(fragment);
+  }
+
+  function renderTable() {
+    if (tableMode === "marks") renderMarksTable();
+    else renderQuestionTable();
+  }
+
+  function setTableMode(nextMode, feedback = false) {
+    if (!['questions', 'marks'].includes(nextMode)) return;
+    tableMode = nextMode;
+    document.querySelectorAll("[data-table-mode]").forEach((button) => {
+      const active = button.dataset.tableMode === tableMode;
+      button.classList.toggle("is-active", active);
+      button.setAttribute("aria-pressed", String(active));
+    });
+    if (feedback) haptic("select");
+    renderTable();
   }
 
   function updateQueue(density) {
@@ -1106,12 +1293,33 @@
   document.querySelectorAll(".quick-button").forEach((button) => {
     button.addEventListener("click", () => {
       if (button.dataset.mark) {
-        setMarks(button.dataset.mark, { haptic: "select", quip: "Back to 508. The original plot." });
+        const target = Number(button.dataset.mark);
+        const activeState = getActiveAnswerState();
+        const correctDelta = (target - selectedMarks) / 5;
+        const scenarioState = activeState && Number.isInteger(correctDelta) ? answerScenario(activeState, correctDelta) : null;
+        if (scenarioState) {
+          applyAnswerScenario(scenarioState, { haptic: "select", quip: "Back to 508. The original plot." });
+        } else {
+          setMarks(target, { haptic: "select", quip: "Back to 508. The original plot." });
+        }
         return;
       }
 
       const delta = Number(button.dataset.delta || 0);
       const improving = delta > 0;
+      const activeState = getActiveAnswerState();
+      const correctDelta = delta / 5;
+      const scenarioState = activeState && Number.isInteger(correctDelta) ? answerScenario(activeState, correctDelta) : null;
+      if (scenarioState) {
+        applyAnswerScenario(scenarioState, {
+          haptic: Math.abs(delta) >= 10 && improving ? "celebrate" : improving ? "success" : "tap",
+          celebrate: improving,
+          quip: improving
+            ? (Math.abs(delta) >= 10 ? "Two wrong answers rescued. Now that is a glow-up." : "One wrong answer rescued. Five marks, loudly.")
+            : (Math.abs(delta) >= 10 ? "Two-question downside checked. You are still here." : "One-question stress test logged.")
+        });
+        return;
+      }
       setMarks(selectedMarks + delta, {
         haptic: Math.abs(delta) >= 10 && improving ? "celebrate" : improving ? "success" : "tap",
         celebrate: improving,
@@ -1124,6 +1332,10 @@
 
   document.querySelectorAll("[data-lens]").forEach((button) => {
     button.addEventListener("click", () => setLens(button.dataset.lens, { feedback: true }));
+  });
+
+  document.querySelectorAll("[data-table-mode]").forEach((button) => {
+    button.addEventListener("click", () => setTableMode(button.dataset.tableMode, true));
   });
 
   themeToggle.addEventListener("click", () => {

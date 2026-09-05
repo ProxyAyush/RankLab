@@ -31,7 +31,7 @@
       window.setTimeout(() => document.documentElement.classList.add("boot-timeout"), 4000);
     })();
   </script>
-  <link rel="stylesheet" href="styles.css?v=2.1.2">
+  <link rel="stylesheet" href="styles.css?v=2.2.0">
 </head>
 <body>
   <div class="boot-screen" id="bootScreen">
@@ -280,20 +280,27 @@
         <p class="lede">A wrong answer changing to correct moves from −1 to +4: a five-mark swing. Explore three flips either way around the weighted centre.</p>
       </div>
 
-      <div class="recall-rail" id="recallRail" aria-label="Rank estimates after score changes"></div>
+      <div class="recall-rail" id="recallRail" aria-label="Rank estimates after question outcome changes"></div>
 
       <details class="score-table-wrap">
         <summary>
           <span>
-            <span class="summary-kicker">Score neighbourhood</span>
-            <strong>See every mark around <span id="tableMark">508</span></strong>
+            <span class="summary-kicker" id="tableSummaryKicker">Question neighbourhood</span>
+            <strong id="tableSummaryText">See ranks around 136 correct answers</strong>
           </span>
           <span class="summary-action"><span>Open table</span><i aria-hidden="true"></i></span>
         </summary>
+        <div class="neighbourhood-toolbar">
+          <p id="tableModeNote">Each step swaps one wrong answer to correct. Unattempted stays at 8, so one step changes the score by five marks.</p>
+          <div class="table-mode-switch" role="group" aria-label="Neighbourhood table view">
+            <button class="is-active" type="button" data-table-mode="questions" aria-pressed="true">Correct answers</button>
+            <button type="button" data-table-mode="marks" aria-pressed="false">Every mark</button>
+          </div>
+        </div>
         <div class="table-scroll">
           <table>
-            <thead>
-                <tr><th scope="col">Marks</th><th scope="col">Weighted AIR</th><th scope="col">Recent baseline</th><th scope="col">Scenario range</th><th scope="col">Percentile</th><th scope="col">Ranks / mark</th></tr>
+            <thead id="scoreTableHead">
+              <tr><th scope="col">Change</th><th scope="col">Correct</th><th scope="col">Wrong</th><th scope="col">Unattempted</th><th scope="col">Marks</th><th scope="col">Weighted AIR</th><th scope="col">Rank movement</th></tr>
             </thead>
             <tbody id="scoreTable"></tbody>
           </table>
@@ -489,7 +496,7 @@
     <div class="dialog-kicker"><span>Quick read</span><span>45 sec</span></div>
     <h2 id="helpTitle">How to use RankLab</h2>
     <ol class="help-steps">
-      <li><span>1</span><div><strong>Set or calculate your marks</strong><p>Drag, type, use ±5, or open “Calculate from answers” to score your correct, wrong and unattempted questions.</p></div></li>
+      <li><span>1</span><div><strong>Set or calculate your marks</strong><p>Drag, type, use ±5, or open “Calculate from answers.” The question view below then shows AIR for each wrong→correct change.</p></div></li>
       <li><span>2</span><div><strong>Read the centre and the band</strong><p>The weighted AIR is the default planning point. The harder-to-easier scenario band matters more before results.</p></div></li>
       <li><span>3</span><div><strong>Compare scenarios</strong><p>Harder is favourable at a fixed mark; easier is adverse. Recent and mixed show the two middle model shapes.</p></div></li>
       <li><span>4</span><div><strong>Plan, don’t conclude</strong><p>Use the easier-paper edge for conservative shortlisting. Replace every estimate with your official AIR when released.</p></div></li>
@@ -532,6 +539,6 @@
   </div>
 
   <script src="model-data.js"></script>
-  <script src="app.js?v=2.1.2"></script>
+  <script src="app.js?v=2.2.0"></script>
 </body>
 </html>

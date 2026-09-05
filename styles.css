@@ -4099,3 +4099,106 @@ html.is-booting.boot-timeout body {
 @media (prefers-reduced-motion: reduce) {
   .recall-score-dock { transition: none; }
 }
+
+/* Question-outcome neighbourhood */
+
+.question-recall-card {
+  min-height: 208px;
+  gap: 12px;
+}
+
+.recall-answer-mix {
+  display: block;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.recall-answer-mix strong { color: var(--text); font-variant-numeric: tabular-nums; }
+.recall-answer-mix i { margin-inline: 2px; color: var(--muted-2); font-style: normal; }
+.question-recall-card .recall-rank { margin-top: 4px; }
+.question-recall-card .recall-move { display: block; min-height: 35px; margin-top: 5px; font-size: 12px; }
+.question-recall-card:disabled { cursor: not-allowed; opacity: 0.5; }
+.question-recall-card:disabled:hover { border-color: var(--line); background: var(--panel); transform: none; }
+
+.neighbourhood-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 15px 18px;
+  border-top: 1px solid var(--line);
+  background: rgba(var(--cyan-rgb), 0.025);
+}
+
+.neighbourhood-toolbar > p {
+  max-width: 68ch;
+  margin: 0;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.table-mode-switch {
+  flex: 0 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3px;
+  padding: 3px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--ink-soft);
+}
+
+.table-mode-switch button {
+  min-height: 38px;
+  padding: 7px 11px;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--muted-2);
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 850;
+  white-space: nowrap;
+  transition: color 180ms ease, background 180ms ease, transform 190ms var(--ease), box-shadow 190ms ease;
+}
+
+.table-mode-switch button:hover { color: var(--text); transform: translateY(-1px); }
+.table-mode-switch button:active { transform: scale(0.96); }
+.table-mode-switch button.is-active { background: var(--panel-bright); box-shadow: 0 5px 15px rgba(0, 0, 0, 0.18); color: var(--acid); }
+
+.score-table-wrap table { min-width: 780px; }
+.score-table-wrap thead th { font-size: 12px; }
+.table-change { display: grid; gap: 2px; color: var(--text); font-weight: 850; }
+.table-change small { color: var(--muted-2); font-size: 12px; font-weight: 700; }
+.rank-movement { color: var(--muted); font-weight: 800; }
+.rank-movement.is-better { color: var(--acid); }
+.rank-movement.is-worse { color: var(--orange); }
+.score-table-wrap tbody tr.is-outside { cursor: not-allowed; opacity: 0.52; }
+.score-table-wrap tbody tr.is-outside:hover { background: transparent; }
+
+.table-empty-row { cursor: default; }
+.table-empty-row:hover { background: transparent; }
+.table-empty-row td { padding: 34px 18px; text-align: center !important; white-space: normal; }
+.table-empty-row strong,
+.table-empty-row span { display: block; }
+.table-empty-row strong { color: var(--text); font-size: 16px; }
+.table-empty-row span { margin-top: 5px; color: var(--muted); font-size: 14px; }
+.table-empty-row button { min-height: 44px; margin-top: 16px; padding: 9px 14px; border: 1px solid rgba(var(--acid-rgb), 0.4); border-radius: 12px; background: rgba(var(--acid-rgb), 0.08); color: var(--acid); cursor: pointer; font-size: 13px; font-weight: 900; transition: background 180ms ease, transform 220ms var(--ease); }
+.table-empty-row button:hover { background: rgba(var(--acid-rgb), 0.13); transform: translateY(-2px); }
+.table-empty-row button:active { transform: scale(0.97); }
+.table-empty-row button i { margin-left: 6px; font-style: normal; }
+
+@media (max-width: 760px) {
+  .neighbourhood-toolbar { align-items: stretch; flex-direction: column; gap: 12px; }
+  .table-mode-switch { width: 100%; }
+  .table-mode-switch button { min-height: 42px; }
+  .question-recall-card { min-height: 220px; }
+}
+
+@media (max-width: 520px) {
+  .neighbourhood-toolbar { padding: 14px; }
+  .neighbourhood-toolbar > p { font-size: 13px; }
+  .score-table-wrap table { min-width: 740px; }
+}

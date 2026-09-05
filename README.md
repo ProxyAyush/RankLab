@@ -11,6 +11,8 @@ A fast, dependency-free marks-to-AIR explorer designed for GitHub Pages.
 - Seven recall-sensitivity states from −15 to +15 and a granular ±12-mark table
 - Progressive correct/wrong/unattempted calculator with live 180-question validation
 - Floating answer-score chip that follows the stats and reopens for instant edits
+- Question-outcome cards and a correct-answer neighbourhood table where each step explicitly swaps one wrong answer to correct (+5 marks)
+- Original one-mark neighbourhood retained as an advanced alternate view
 - Plain-language explainer and dated source desk
 - Animated day/night themes that follow the device and remember the last choice
 - Reactive rank moods, playful microcopy, particle celebrations and touch ripples
